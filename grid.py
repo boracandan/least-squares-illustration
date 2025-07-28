@@ -1,6 +1,5 @@
 import pygame
 
-
 class Grid:
     def __init__(self, screenWidth: int, screenHeight: int) -> None:
         self.displaySurface = pygame.display.get_surface()
@@ -15,12 +14,12 @@ class Grid:
         self.origin = pygame.Vector2((int(screenWidth // 2), int(screenHeight // 2)))
 
         # Position UI
-        self.font = pygame.font.Font(None, 20)
+        self.font = pygame.font.Font(filename=None, size=20)
         self.roundDigits = 3
 
     def draw_ui(self) -> None:
         self.mousePosition = (pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(self.origin)) / self.scale * self.unitSize
-        textSurf = self.font.render(f"x: {round(self.mousePosition.x, self.roundDigits)}, y: {round(self.mousePosition.y, self.roundDigits)}", True, "black")
+        textSurf = self.font.render(f"x: {round(self.mousePosition.x, self.roundDigits)}, y: {round(-self.mousePosition.y, self.roundDigits)}", True, "black")
         textRect = textSurf.get_frect(topleft = (0, 0))
 
         self.displaySurface.blit(textSurf, textRect)
@@ -28,14 +27,24 @@ class Grid:
     def draw_horizontal_label(self, y: float) -> None:
         coordinate = (y - self.origin.y) / self.scale * self.unitSize
         label = round(-coordinate, self.roundDigits)
-        textSurf = self.font.render(str(label), True, "black")
+        labelStr = str(label)
+
+        font_size = max(int(self.scale * 0.4 - len(labelStr)), 10)  # adjust as needed
+        font = pygame.font.Font(filename=None, size=font_size)
+
+        textSurf = font.render(str(label), True, "black")
         textRect = textSurf.get_frect(midright = (self.origin.x, y))
         self.displaySurface.blit(textSurf, textRect)
 
     def draw_vertical_label(self, x: float) -> None:
         coordinate = (x - self.origin.x) / self.scale * self.unitSize
         label = round(coordinate, self.roundDigits)
-        textSurf = self.font.render(str(label), True, "black")
+        labelStr = str(label)
+
+        font_size = max(int(self.scale * 0.4 - len(labelStr)), 10)  # adjust as needed
+        font = pygame.font.Font(filename=None, size=font_size)
+
+        textSurf = font.render(str(label), True, "black", )
         textRect = textSurf.get_frect(midtop = (x, self.origin.y))
         self.displaySurface.blit(textSurf, textRect)
 
@@ -64,7 +73,7 @@ class Grid:
         pygame.draw.line(self.displaySurface, "black", (0, self.origin.y), (self.width, self.origin.y))
 
 
-    def update_scale(self) -> None: 
+    def update_scale(self) -> None:
         if self.minScale <= self.scale <= self.maxScale:
             return
         self.unitSize *= self.defaultScale / self.maxScale if self.scale > self.maxScale else self.defaultScale / self.minScale
