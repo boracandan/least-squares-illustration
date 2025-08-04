@@ -42,8 +42,6 @@ class LeastSquaresIllustration:
 
             pygame.display.update()
 
-            print(self.grid.unitSize)
-
         pygame.quit()
 
 

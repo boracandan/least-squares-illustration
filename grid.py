@@ -19,6 +19,8 @@ class Grid:
 
         self.preMousePosition = pygame.Vector2(pygame.mouse.get_pos())
 
+        self.points = []
+
 
 
     def draw_ui(self) -> None:
@@ -83,6 +85,11 @@ class Grid:
         pygame.draw.line(self.displaySurface, "black", (self.origin.x, 0), (self.origin.x, self.height))
         pygame.draw.line(self.displaySurface, "black", (0, self.origin.y), (self.width, self.origin.y))
 
+    def draw_points(self) -> None:
+        pointWorldCoordinates = list(map(lambda point: self.origin + point / self.unitSize * self.scale, self.points))
+        for pointCoordinate in pointWorldCoordinates:
+            if 0 < pointCoordinate.y < self.height and 0 < pointCoordinate.x < self.width:
+                pygame.draw.circle(self.displaySurface, "purple", pointCoordinate, 4)
 
     def update_scale(self) -> None:
         if self.minScale <= self.scale <= self.maxScale:
@@ -93,6 +100,7 @@ class Grid:
     def draw(self) -> None:
         self.draw_axis()
         self.draw_ui()
+        self.draw_points()
     
     def handle_event(self, event: pygame.Event) -> None:
         if event.type == pygame.MOUSEWHEEL:
@@ -104,16 +112,23 @@ class Grid:
             self.adjust_origin(preMousePosition, newMousePosition)
         
     def update(self) -> None:
-        self.handle_mouse_drag()
+        mousePressed = pygame.mouse.get_pressed()
+        mouseJustPressed = pygame.mouse.get_just_pressed()
+        self.handle_mouse_drag(mousePressed)
+        self.handle_mouse_just_pressed(mouseJustPressed)
 
     def adjust_origin(self, preMousePos: pygame.Vector2, newMousePos: pygame.Vector2) -> None:
         offset = newMousePos - preMousePos
         pixel_offset = offset / self.unitSize * self.scale
         self.origin += pygame.Vector2(round(pixel_offset.x), round(pixel_offset.y))
 
-    def handle_mouse_drag(self) -> None:
+    def handle_mouse_drag(self, mousePressed: list) -> None:
         mousePos = pygame.Vector2(pygame.mouse.get_pos())
-        mousePressed = pygame.mouse.get_pressed()
-        if mousePressed[0]:
+        if mousePressed[0]: # Mouse Left Click
             self.origin += mousePos - self.preMousePosition
         self.preMousePosition = mousePos
+
+    def handle_mouse_just_pressed(self, mouseJustPressed: list) -> None:
+        if mouseJustPressed[2]: # Mouse Right Click
+            mousePos = (pygame.Vector2(pygame.mouse.get_pos()) - self.origin) / self.scale * self.unitSize
+            self.points.append(mousePos)
