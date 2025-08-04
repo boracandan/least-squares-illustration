@@ -52,20 +52,23 @@ class Grid:
         # Draw Grid
         for xPos in range(int(self.origin.x) + int(self.scale), self.width, int(self.scale)):
             pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (2 * self.origin.x - xPos, 0), (2 * self.origin.x - xPos, self.height))
-
-            mirroredX = 2 * self.origin.x - xPos
 
             self.draw_vertical_label(xPos)
-            self.draw_vertical_label(mirroredX)
+
+        for xPos in range(int(self.origin.x) - int(self.scale), 0, -int(self.scale)):
+            pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
+
+            self.draw_vertical_label(xPos)
 
         for yPos in range(int(self.origin.y) + int(self.scale), self.height, int(self.scale)):
             pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (0, 2 * self.origin.y - yPos), (self.width, 2 * self.origin.y - yPos))
 
-            mirroredY = 2 * self.origin.y - yPos
             self.draw_horizontal_label(yPos)
-            self.draw_horizontal_label(mirroredY)
+        
+        for yPos in range(int(self.origin.y) - int(self.scale), 0, -int(self.scale)):
+            pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
+
+            self.draw_horizontal_label(yPos)
 
             
         # Draw Axis Lines
@@ -85,5 +88,17 @@ class Grid:
     
     def handle_event(self, event: pygame.Event) -> None:
         if event.type == pygame.MOUSEWHEEL:
+            mouseScreen = pygame.Vector2(pygame.mouse.get_pos())
+            preMousePosition = (mouseScreen - self.origin) / self.scale * self.unitSize
             self.scale += event.y * self.scalingMultiplier
             self.update_scale()
+            newMousePosition = (mouseScreen - self.origin) / self.scale * self.unitSize
+            self.adjust_origin(preMousePosition, newMousePosition)
+    
+    def adjust_origin(self, preMousePos: pygame.Vector2, newMousePos: pygame.Vector2) -> None:
+        offset = newMousePos - preMousePos
+        pixel_offset = offset / self.unitSize * self.scale
+        self.origin += pygame.Vector2(round(pixel_offset.x), round(pixel_offset.y))
+
+
+
