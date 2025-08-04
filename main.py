@@ -34,6 +34,7 @@ class LeastSquaresIllustration:
 
             # Update
             self.all_sprites.update()
+            self.grid.update()
             
             # Draw
             self.display_surface.fill("white")

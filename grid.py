@@ -17,6 +17,10 @@ class Grid:
         self.font = pygame.font.Font(filename=None, size=20)
         self.roundDigits = 3
 
+        self.preMousePosition = pygame.Vector2(pygame.mouse.get_pos())
+
+
+
     def draw_ui(self) -> None:
         self.mousePosition = (pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(self.origin)) / self.scale * self.unitSize
         textSurf = self.font.render(f"x: {round(self.mousePosition.x, self.roundDigits)}, y: {round(-self.mousePosition.y, self.roundDigits)}", True, "black")
@@ -51,24 +55,28 @@ class Grid:
     def draw_axis(self) -> None:
         # Draw Grid
         for xPos in range(int(self.origin.x) + int(self.scale), self.width, int(self.scale)):
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
+            if xPos >= 0:
+                pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
 
-            self.draw_vertical_label(xPos)
+                self.draw_vertical_label(xPos)
 
         for xPos in range(int(self.origin.x) - int(self.scale), 0, -int(self.scale)):
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
+            if xPos <= self.width:
+                pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
 
-            self.draw_vertical_label(xPos)
+                self.draw_vertical_label(xPos)
 
         for yPos in range(int(self.origin.y) + int(self.scale), self.height, int(self.scale)):
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
+            if yPos >= 0:
+                pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
 
-            self.draw_horizontal_label(yPos)
+                self.draw_horizontal_label(yPos)
         
         for yPos in range(int(self.origin.y) - int(self.scale), 0, -int(self.scale)):
-            pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
+            if yPos <= self.height:
+                pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
 
-            self.draw_horizontal_label(yPos)
+                self.draw_horizontal_label(yPos)
 
             
         # Draw Axis Lines
@@ -94,11 +102,18 @@ class Grid:
             self.update_scale()
             newMousePosition = (mouseScreen - self.origin) / self.scale * self.unitSize
             self.adjust_origin(preMousePosition, newMousePosition)
-    
+        
+    def update(self) -> None:
+        self.handle_mouse_drag()
+
     def adjust_origin(self, preMousePos: pygame.Vector2, newMousePos: pygame.Vector2) -> None:
         offset = newMousePos - preMousePos
         pixel_offset = offset / self.unitSize * self.scale
         self.origin += pygame.Vector2(round(pixel_offset.x), round(pixel_offset.y))
 
-
-
+    def handle_mouse_drag(self) -> None:
+        mousePos = pygame.Vector2(pygame.mouse.get_pos())
+        mousePressed = pygame.mouse.get_pressed()
+        if mousePressed[0]:
+            self.origin += mousePos - self.preMousePosition
+        self.preMousePosition = mousePos
