@@ -49,7 +49,7 @@ least-squares-illustration/
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/least-squares-illustration.git
+git clone https://github.com/boracandan/least-squares-illustration.git
 cd least-squares-illustration
 
 # Create virtual environment
