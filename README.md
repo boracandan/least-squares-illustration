@@ -4,9 +4,9 @@ An interactive Pygame application to visualize least squares polynomial regressi
 
 ---
 
-## 📸 Demo
+## 📸 Some drafts of the progress of development
 
-[![](https://img.shields.io/badge/Click%20to%20View-Demo-informational)](link-to-demo-gif-or-video-if-available)
+![WhatsApp Görsel 2025-08-08 saat 20 56 13_a87047af](https://github.com/user-attachments/assets/c035b62c-c4e3-4d47-ab62-eef2b7288e91)
 
 ---
 
@@ -25,7 +25,7 @@ An interactive Pygame application to visualize least squares polynomial regressi
 ```
 least-squares-illustration/
 ├── README.md
-├── pyproject.toml / requirements.txt
+├── pyproject.toml
 └── src/
     ├── __init__.py
     ├── main.py          # Entry point – initializes app
@@ -64,8 +64,6 @@ poetry install
 # Using poetry
 poetry run python src/main.py
 
-# Or using plain Python
-python src/main.py
 ```
 
 ---
