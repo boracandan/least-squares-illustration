@@ -13,4 +13,4 @@ def polynomial_approximation(dataPoints: Iterable[Tuple[float, float]], n: int) 
     # Coefficient Vector
     c = pseudoInvA @ yPoints
 
-    return c
+    return list(c)

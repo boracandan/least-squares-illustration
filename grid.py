@@ -1,8 +1,13 @@
 import pygame
+import pygame_gui
+
+from ui import RegressionUI
+from fitter import polynomial_approximation
 
 class Grid:
-    def __init__(self, screenWidth: int, screenHeight: int) -> None:
+    def __init__(self, screenWidth: int, screenHeight: int, ui: RegressionUI) -> None:
         self.displaySurface = pygame.display.get_surface()
+        self.ui = ui
 
         self.width = screenWidth
         self.height = screenHeight
@@ -20,7 +25,7 @@ class Grid:
         self.preMousePosition = pygame.Vector2(pygame.mouse.get_pos())
 
         self.points = []
-        self.funcCoef = [-5, 3, -2]
+        self.funcCoef = []
 
     def world_to_screen(self, *args):
         match args:
@@ -29,6 +34,10 @@ class Grid:
                 return screenCoordinate
             case coordinates if all(isinstance(c, pygame.Vector2) for c in coordinates):
                 return [self.world_to_screen(c) for c in coordinates]
+            case [float() | int() as xCoordinate, "x"]:
+                return self.origin.x + xCoordinate / self.unitSize * self.scale
+            case [float() | int() as yCoordinate, "y"]:
+                return self.origin.y - yCoordinate / self.unitSize * self.scale
             case _:
                 raise ValueError("Invalid input to world_to_screen")
 
@@ -39,6 +48,10 @@ class Grid:
                 return screenCoordinate
             case coordinates if all(isinstance(c, pygame.Vector2) for c in coordinates):
                 return [self.screen_to_world(c) for c in coordinates]
+            case [float() | int() as xCoordinate, "x"]:
+                return (xCoordinate - self.origin.x) / self.scale * self.unitSize
+            case [float() | int() as yCoordinate, "y"]:
+                return (self.origin.y - yCoordinate) / self.scale * self.unitSize
             case _:
                 raise ValueError("Invalid input to screen_to_world")
             
@@ -50,8 +63,8 @@ class Grid:
         self.displaySurface.blit(textSurf, textRect)
 
     def draw_horizontal_label(self, y: float) -> None:
-        coordinate = (y - self.origin.y) / self.scale * self.unitSize
-        label = round(-coordinate, self.roundDigits)
+        coordinate = self.screen_to_world(y, "y")
+        label = round(coordinate, self.roundDigits)
         labelStr = str(label)
 
         font_size = max(int(self.scale * 0.4 - len(labelStr)), 10)  # adjust as needed
@@ -62,7 +75,7 @@ class Grid:
         self.displaySurface.blit(textSurf, textRect)
 
     def draw_vertical_label(self, x: float) -> None:
-        coordinate = (x - self.origin.x) / self.scale * self.unitSize
+        coordinate = self.screen_to_world(x, "x")
         label = round(coordinate, self.roundDigits)
         labelStr = str(label)
 
@@ -115,12 +128,12 @@ class Grid:
             points = []
 
             for xPixel in range(0, self.width):
-                xVal = (xPixel - self.origin.x) / self.scale * self.unitSize
+                xVal = self.screen_to_world(xPixel, "x")
                 yVal = 0
                 for i in range(len(self.funcCoef)):
                     yVal += self.funcCoef[i] * xVal ** i
 
-                screenPoint = self.world_to_screen(pygame.Vector2(xVal, yVal))
+                screenPoint = pygame.Vector2(xPixel, self.world_to_screen(yVal, "y"))
                 points.append(screenPoint)
 
             if len(points) >= 2:
@@ -146,17 +159,26 @@ class Grid:
             self.update_scale()
             newMousePosition = self.screen_to_world(mouseScreen)
             self.adjust_origin(preMousePosition, newMousePosition)
+
+        if event.type == pygame_gui.UI_BUTTON_PRESSED:
+            try:
+                self.funcCoef = polynomial_approximation(self.points, int(self.ui.nInput.get_text()))
+            
+            except ValueError:
+                pass # silently ignore invalid input
+
         
     def update(self) -> None:
         mousePressed = pygame.mouse.get_pressed()
         mouseJustPressed = pygame.mouse.get_just_pressed()
-        self.handle_mouse_drag(mousePressed)
-        self.handle_mouse_just_pressed(mouseJustPressed)
+        if not self.ui.mouseInPanel:
+            self.handle_mouse_drag(mousePressed)
+            self.handle_mouse_just_pressed(mouseJustPressed)
 
     def adjust_origin(self, preMousePos: pygame.Vector2, newMousePos: pygame.Vector2) -> None:
         offset = newMousePos - preMousePos
         pixel_offset = offset / self.unitSize * self.scale
-        self.origin += pygame.Vector2(round(pixel_offset.x), round(pixel_offset.y))
+        self.origin += pygame.Vector2(round(pixel_offset.x), -round(pixel_offset.y))
 
     def handle_mouse_drag(self, mousePressed: list) -> None:
         mousePos = pygame.Vector2(pygame.mouse.get_pos())
@@ -168,3 +190,4 @@ class Grid:
         if mouseJustPressed[2]: # Mouse Right Click
             mousePos = self.screen_to_world(pygame.Vector2(pygame.mouse.get_pos()))
             self.points.append(mousePos)
+

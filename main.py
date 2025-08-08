@@ -1,7 +1,9 @@
 import pygame
+import pygame_gui
 
 from settings import *
 from grid import Grid
+from ui import RegressionUI
 
 class LeastSquaresIllustration:
     def __init__(self) -> None:
@@ -14,10 +16,12 @@ class LeastSquaresIllustration:
         # groups 
         self.all_sprites = pygame.sprite.Group()
 
-        # Grid
-        self.grid = Grid(WINDOW_WIDTH, WINDOW_HEIGHT)
+        # UI
+        self.uiManager = pygame_gui.UIManager((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.ui = RegressionUI(pygame.Rect((WINDOW_WIDTH - 158, -2), (160, 120)), self.uiManager)
 
-        # Text 
+        # Grid
+        self.grid = Grid(WINDOW_WIDTH, WINDOW_HEIGHT, ui=self.ui)
 
         # Start game loop
         self.run()
@@ -32,13 +36,17 @@ class LeastSquaresIllustration:
                 
                 self.grid.handle_event(event)
 
+                self.uiManager.process_events(event)
+
             # Update
+            self.uiManager.update(dt)
             self.all_sprites.update()
             self.grid.update()
             
             # Draw
             self.display_surface.fill("white")
             self.grid.draw()
+            self.uiManager.draw_ui(self.display_surface)
 
             pygame.display.update()
 
