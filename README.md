@@ -2,11 +2,17 @@
 
 An interactive Pygame application to visualize least squares polynomial regression. Click to add data points, choose the polynomial degree, and watch the curve fit in real time. Great for teaching and exploring the geometric intuition behind regression.
 
+Inspired by the Linear Algebra course I took this summer, the regression is implemented via pseudo-inverse matrices.
+
 ---
 
 ## 📸 Some drafts of the progress of development
 
+![WhatsApp Görsel 2025-08-08 saat 20 56 22_d97fd16a](https://github.com/user-attachments/assets/786850a0-f7e1-4d27-a5fb-f8ab95ba9a62)
 ![WhatsApp Görsel 2025-08-08 saat 20 56 13_a87047af](https://github.com/user-attachments/assets/c035b62c-c4e3-4d47-ab62-eef2b7288e91)
+![WhatsApp Görsel 2025-08-08 saat 20 56 22_925bd7f3](https://github.com/user-attachments/assets/953b38b4-c83f-4433-bebb-ed45ed8c632a)
+![WhatsApp Görsel 2025-08-08 saat 20 56 22_1c5aa0b1](https://github.com/user-attachments/assets/1f639941-deae-4f41-ae74-7fddb38cffc9)
+
 
 ---
 
