@@ -1,8 +1,9 @@
 import pygame
 import pygame_gui
 
-from ui import RegressionUI
-from fitter import polynomial_approximation
+from src.ui import RegressionUI
+from src.fitter import polynomial_approximation
+from src.settings import *
 
 class Grid:
     def __init__(self, screenWidth: int, screenHeight: int, ui: RegressionUI) -> None:
@@ -55,9 +56,9 @@ class Grid:
             case _:
                 raise ValueError("Invalid input to screen_to_world")
             
-    def draw_ui(self) -> None:
+    def draw_mouse_pos(self) -> None:
         self.mousePosition = self.screen_to_world(pygame.Vector2(pygame.mouse.get_pos()))
-        textSurf = self.font.render(f"x: {round(self.mousePosition.x, self.roundDigits)}, y: {round(self.mousePosition.y, self.roundDigits)}", True, "black")
+        textSurf = self.font.render(f"x: {round(self.mousePosition.x, self.roundDigits)}, y: {round(self.mousePosition.y, self.roundDigits)}", True, Color.BLACK)
         textRect = textSurf.get_frect(topleft = (0, 0))
 
         self.displaySurface.blit(textSurf, textRect)
@@ -70,7 +71,7 @@ class Grid:
         font_size = max(int(self.scale * 0.4 - len(labelStr)), 10)  # adjust as needed
         font = pygame.font.Font(filename=None, size=font_size)
 
-        textSurf = font.render(str(label), True, "black")
+        textSurf = font.render(str(label), True, Color.BLACK)
         textRect = textSurf.get_frect(midright = (self.origin.x, y))
         self.displaySurface.blit(textSurf, textRect)
 
@@ -82,7 +83,7 @@ class Grid:
         font_size = max(int(self.scale * 0.4 - len(labelStr)), 10)  # adjust as needed
         font = pygame.font.Font(filename=None, size=font_size)
 
-        textSurf = font.render(str(label), True, "black", )
+        textSurf = font.render(str(label), True, Color.BLACK)
         textRect = textSurf.get_frect(midtop = (x, self.origin.y))
         self.displaySurface.blit(textSurf, textRect)
 
@@ -90,38 +91,38 @@ class Grid:
         # Draw Grid
         for xPos in range(int(self.origin.x) + int(self.scale), self.width, int(self.scale)):
             if xPos >= 0:
-                pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
+                pygame.draw.line(self.displaySurface, Color.GRAY, (xPos, 0), (xPos, self.height))
 
                 self.draw_vertical_label(xPos)
 
         for xPos in range(int(self.origin.x) - int(self.scale), 0, -int(self.scale)):
             if xPos <= self.width:
-                pygame.draw.line(self.displaySurface, "#b7b8b4", (xPos, 0), (xPos, self.height))
+                pygame.draw.line(self.displaySurface, Color.GRAY, (xPos, 0), (xPos, self.height))
 
                 self.draw_vertical_label(xPos)
 
         for yPos in range(int(self.origin.y) + int(self.scale), self.height, int(self.scale)):
             if yPos >= 0:
-                pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
+                pygame.draw.line(self.displaySurface, Color.GRAY, (0, yPos), (self.width, yPos))
 
                 self.draw_horizontal_label(yPos)
         
         for yPos in range(int(self.origin.y) - int(self.scale), 0, -int(self.scale)):
             if yPos <= self.height:
-                pygame.draw.line(self.displaySurface, "#b7b8b4", (0, yPos), (self.width, yPos))
+                pygame.draw.line(self.displaySurface, Color.GRAY, (0, yPos), (self.width, yPos))
 
                 self.draw_horizontal_label(yPos)
 
             
         # Draw Axis Lines
-        pygame.draw.line(self.displaySurface, "black", (self.origin.x, 0), (self.origin.x, self.height))
-        pygame.draw.line(self.displaySurface, "black", (0, self.origin.y), (self.width, self.origin.y))
+        pygame.draw.line(self.displaySurface, Color.BLACK, (self.origin.x, 0), (self.origin.x, self.height))
+        pygame.draw.line(self.displaySurface, Color.BLACK, (0, self.origin.y), (self.width, self.origin.y))
 
     def draw_points(self) -> None:
         pointWorldCoordinates = list(map(self.world_to_screen, self.points))
         for pointCoordinate in pointWorldCoordinates:
             if 0 < pointCoordinate.y < self.height and 0 < pointCoordinate.x < self.width:
-                pygame.draw.circle(self.displaySurface, "purple", pointCoordinate, 4)
+                pygame.draw.circle(self.displaySurface, Color.PURPLE, pointCoordinate, 2)
 
     def draw_func(self) -> None:
         if self.funcCoef:
@@ -137,7 +138,7 @@ class Grid:
                 points.append(screenPoint)
 
             if len(points) >= 2:
-                pygame.draw.aalines(self.displaySurface, "blue", False, points)
+                pygame.draw.aalines(self.displaySurface, Color.BLUE, False, points)
 
     def update_scale(self) -> None:
         if self.minScale <= self.scale <= self.maxScale:
@@ -147,7 +148,7 @@ class Grid:
 
     def draw(self) -> None:
         self.draw_axis()
-        self.draw_ui()
+        self.draw_mouse_pos()
         self.draw_points()
         self.draw_func()
     

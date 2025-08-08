@@ -1,7 +1,7 @@
 import pygame_gui
 import pygame
 
-from settings import *
+from src.settings import *
 
 class RegressionUI:
     def __init__(self, rect: pygame.Rect, manager: pygame_gui.UIManager) -> None:

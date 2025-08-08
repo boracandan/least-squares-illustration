@@ -1,9 +1,9 @@
 import pygame
 import pygame_gui
 
-from settings import *
-from grid import Grid
-from ui import RegressionUI
+from src.settings import *
+from src.grid import Grid
+from src.ui import RegressionUI
 
 class LeastSquaresIllustration:
     def __init__(self) -> None:
@@ -26,7 +26,7 @@ class LeastSquaresIllustration:
         # Start game loop
         self.run()
 
-    def run(self) -> None:
+    def run(self) -> None: 
         while self.running:
             dt = self.clock.tick() / 1000
 
