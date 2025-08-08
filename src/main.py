@@ -1,9 +1,9 @@
 import pygame
 import pygame_gui
 
-from src.settings import *
-from src.grid import Grid
-from src.ui import RegressionUI
+from settings import *
+from grid import Grid
+from ui import RegressionUI
 
 class LeastSquaresIllustration:
     def __init__(self) -> None:

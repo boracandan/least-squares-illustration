@@ -1,9 +1,9 @@
 import pygame
 import pygame_gui
 
-from src.ui import RegressionUI
-from src.fitter import polynomial_approximation
-from src.settings import *
+from ui import RegressionUI
+from fitter import polynomial_approximation
+from settings import *
 
 class Grid:
     def __init__(self, screenWidth: int, screenHeight: int, ui: RegressionUI) -> None:
