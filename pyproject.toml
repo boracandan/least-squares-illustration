@@ -1,4 +1,4 @@
-[project]
+[tool.poetry]
 name = "least-squares-illustration"
 version = "0.1.0"
 description = "A pygame based illustration of data fiting (least-squares approximate solutions) using pygame"
@@ -12,6 +12,8 @@ dependencies = [
     "numpy (>=2.3.2,<3.0.0)",
     "pygame-gui (>=0.6.14,<0.7.0)"
 ]
+package-mode = false
+
 
 
 [build-system]
