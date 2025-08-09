@@ -172,9 +172,11 @@ class Grid:
     def update(self) -> None:
         mousePressed = pygame.mouse.get_pressed()
         mouseJustPressed = pygame.mouse.get_just_pressed()
+        keyPressed = pygame.key.get_pressed()
         if not self.ui.mouseInPanel:
             self.handle_mouse_drag(mousePressed)
             self.handle_mouse_just_pressed(mouseJustPressed)
+        self.handle_key_pressed(keyPressed)
 
     def adjust_origin(self, preMousePos: pygame.Vector2, newMousePos: pygame.Vector2) -> None:
         offset = newMousePos - preMousePos
@@ -191,4 +193,8 @@ class Grid:
         if mouseJustPressed[2]: # Mouse Right Click
             mousePos = self.screen_to_world(pygame.Vector2(pygame.mouse.get_pos()))
             self.points.append(mousePos)
+
+    def handle_key_pressed(self, keyPressed: pygame.key.ScancodeWrapper):
+        if keyPressed[pygame.K_r]:
+            self.points = []
 

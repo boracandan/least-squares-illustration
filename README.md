@@ -96,6 +96,7 @@ pip install pygame pygame_gui numpy
 - Pan: hold right mouse button and drag
 - Zoom: use scroll wheel
 - Curve updates instantly based on added points and degree
+- Press the "R" key on the keyboard to delete all points and reset the graph
 
 ---
 
